@@ -4,7 +4,8 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://meu-catalogo.vercel.app', // Placeholder - atualizar com dominio real no deploy
+  site: 'https://gabriolli.github.io',
+  base: '/catalogo',
   vite: {
     plugins: [tailwindcss()],
   },
