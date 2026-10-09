@@ -1,0 +1,44 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { formatCurrency } from '../utils/formatCurrency.js';
+import { MAX_INSTALLMENTS } from '../config/site.js';
+
+interface Props {
+  produto: CollectionEntry<'produtos'>;
+}
+
+const { produto } = Astro.props;
+const { nome, preco, imagens, tamanhos } = produto.data;
+
+const [imagemPrincipal, imagemSecundaria = imagemPrincipal] = imagens;
+---
+
+<a href={`/produto/${produto.id}`} class="group block">
+  <div class="relative aspect-[4/5] overflow-hidden bg-surface-alt">
+    <Image
+      src={imagemPrincipal}
+      alt={nome}
+      width={400}
+      height={500}
+      class="absolute inset-0 h-full w-full object-cover transition-opacity duration-500 group-hover:opacity-0"
+    />
+    <Image
+      src={imagemSecundaria}
+      alt=""
+      width={400}
+      height={500}
+      class="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+    />
+  </div>
+
+  <div class="pt-3">
+    <h3 class="text-[15px] leading-snug text-dark group-hover:underline underline-offset-4">{nome}</h3>
+    <p class="mt-1.5 font-semibold text-primary">{formatCurrency(preco)}</p>
+    <p class="text-[13px] text-muted">{MAX_INSTALLMENTS}x de {formatCurrency(preco / MAX_INSTALLMENTS)}</p>
+    <p class="mt-2 flex gap-2.5 text-xs text-muted">
+      <span class="sr-only">Tamanhos disponíveis:</span>
+      {tamanhos.map((tamanho) => <span>{tamanho}</span>)}
+    </p>
+  </div>
+</a>

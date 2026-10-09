@@ -1,0 +1,101 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProductCard from '../components/ProductCard.astro';
+import { SITE_NAME, SITE_DESCRIPTION, CATEGORIES } from '../config/site.js';
+import heroPraia from '../assets/hero/hero-praia.png';
+import heroFitness from '../assets/hero/hero-fitness.png';
+
+const todosProdutos = await getCollection('produtos');
+
+/*
+ * Paineis do hero. A palavra gigante e dimensionada em unidades de container (cqi)
+ * para ocupar quase toda a largura do painel em qualquer tela; o valor depende do
+ * numero de letras de cada palavra.
+ */
+const heroPanels = [
+  {
+    href: '#praia',
+    word: 'Praia',
+    cta: 'Ver moda praia',
+    image: heroPraia,
+    alt: 'Modelo de biquíni rosa na areia de uma praia no Rio de Janeiro',
+    panelClass: 'md:col-span-6 bg-blush',
+    imageClass: 'object-[68%_center]',
+    wordClass: 'text-dark text-[46cqi]',
+    ctaClass: 'text-dark',
+  },
+  {
+    href: '#fitness',
+    word: 'Fitness',
+    cta: 'Ver fitness',
+    image: heroFitness,
+    alt: 'Atleta de legging e top azul-marinho fazendo avanço em estúdio',
+    panelClass: 'md:col-span-6 bg-dark',
+    imageClass: 'object-center',
+    wordClass: 'text-blush text-[33cqi]',
+    ctaClass: 'text-white',
+  },
+];
+
+const sections = Object.entries(CATEGORIES).map(([categoria, { id, label }]) => ({
+  id,
+  title: label,
+  produtos: todosProdutos.filter(p => p.data.categoria === categoria),
+}));
+
+const formatPieceCount = (count: number) => `${count} ${count === 1 ? 'peça' : 'peças'}`;
+---
+
+<BaseLayout title={`${SITE_NAME} | Moda praia e fitness`} description={SITE_DESCRIPTION}>
+  <h1 class="sr-only">{SITE_NAME}: moda praia e fitness</h1>
+
+  <section aria-label="Categorias" class="grid grid-cols-1 md:grid-cols-12">
+    {heroPanels.map((panel, index) => (
+      <a
+        href={panel.href}
+        class={`group @container relative block overflow-hidden h-[62svh] min-h-[420px] md:h-[calc(100svh-6.5rem)] md:max-h-[860px] ${panel.panelClass}`}
+      >
+        <Image
+          src={panel.image}
+          alt={panel.alt}
+          widths={[640, 1024]}
+          sizes="(min-width: 768px) 58vw, 100vw"
+          loading="eager"
+          fetchpriority={index === 0 ? 'high' : 'auto'}
+          class={`absolute inset-0 h-full w-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.03] ${panel.imageClass}`}
+        />
+
+        <span class={`absolute left-5 top-5 md:left-8 md:top-8 text-[15px] font-medium underline decoration-primary decoration-2 underline-offset-[6px] ${panel.ctaClass}`}>
+          {panel.cta}
+        </span>
+
+        <span
+          aria-hidden="true"
+          class={`type-display absolute bottom-0 left-[2.5cqi] block animate-rise [--rise-to:13%] ${panel.wordClass}`}
+          style={`animation-delay: ${150 + index * 140}ms`}
+        >
+          {panel.word}
+        </span>
+      </a>
+    ))}
+  </section>
+
+  <div class="container mx-auto px-4 pt-16 md:pt-24 pb-24 space-y-20 md:space-y-28">
+    {sections.map(section => (
+      <section id={section.id} aria-labelledby={`${section.id}-title`} class="scroll-mt-24">
+        <header class="flex items-end justify-between gap-4 border-b-2 border-dark pb-3 mb-8 md:mb-10">
+          <h2 id={`${section.id}-title`} class="type-display text-[3.25rem] md:text-[5.5rem] text-dark">
+            {section.title}
+          </h2>
+          <p class="text-sm text-muted pb-1">{formatPieceCount(section.produtos.length)}</p>
+        </header>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-10 md:gap-x-6 md:gap-y-14">
+          {section.produtos.map(produto => <ProductCard produto={produto} />)}
+        </div>
+      </section>
+    ))}
+  </div>
+</BaseLayout>

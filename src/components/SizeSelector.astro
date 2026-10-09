@@ -1,0 +1,33 @@
+---
+interface Props {
+  tamanhos: string[];
+}
+
+const { tamanhos } = Astro.props;
+---
+
+<div class="size-selector">
+  <div class="flex items-center justify-between mb-3">
+    <h3 class="text-sm font-semibold text-dark uppercase tracking-wider">Tamanho</h3>
+    <button type="button" class="text-xs text-muted hover:text-dark transition-colors underline">Tabela de medidas</button>
+  </div>
+  
+  <div id="sizes-container" class="w-fit flex flex-wrap gap-3 p-1 rounded-md transition-all duration-300">
+    {tamanhos.map((tamanho, index) => (
+      <label class="cursor-pointer">
+        <input 
+          type="radio" 
+          name="tamanho" 
+          value={tamanho} 
+          class="peer sr-only size-radio"
+        />
+        <div class="h-11 px-5 flex items-center justify-center rounded-full bg-surface-alt text-dark-soft font-medium peer-checked:bg-dark peer-checked:text-white hover:bg-border transition-colors">
+          {tamanho}
+        </div>
+      </label>
+    ))}
+  </div>
+  <p id="size-error" class="text-danger text-sm mt-2 hidden">
+    Por favor, selecione um tamanho.
+  </p>
+</div>

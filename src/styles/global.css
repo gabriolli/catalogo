@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+/*
+ * DESIGN TOKENS
+ * Para trocar a identidade visual do projeto, altere APENAS este arquivo.
+ * Todas as cores usam nomes semanticos (por funcao, nao por cor).
+ * Nenhum componente deve usar valores hex/rgb diretamente.
+ *
+ * Paleta: Marinho (dark), Hibisco (primary), Concha (blush), Nevoa (surface-alt).
+ * Regra: Hibisco e reservado para acoes de compra.
+ */
+
+@theme {
+  --color-primary: #D6336C;
+  --color-primary-hover: #B8245A;
+  --color-dark: #1C2541;
+  --color-dark-soft: #3A4466;
+  --color-muted: #5A6278;
+  --color-blush: #FCE8EE;
+  --color-surface: #F6F7F9;
+  --color-surface-alt: #EEF1F5;
+  --color-border: #DDE1E8;
+  --color-danger: #B42318;
+  --color-white: #FFFFFF;
+
+  /* Archivo variable: eixo de largura 62-125 usado para o display condensado */
+  --font-sans: 'Archivo', system-ui, -apple-system, sans-serif;
+
+  --animate-shake: shake 0.4s ease-in-out;
+  --animate-rise: rise 0.9s cubic-bezier(0.2, 0.7, 0.1, 1) both;
+}
+
+/* Display condensado: a unica ousadia tipografica do layout */
+@utility type-display {
+  font-stretch: 62%;
+  font-weight: 800;
+  line-height: 0.86;
+  letter-spacing: -0.01em;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-stretch: 100%;
+  color: var(--color-dark);
+  background-color: var(--color-white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+@keyframes rise {
+  from { transform: translateY(100%); }
+  to { transform: translateY(var(--rise-to, 0)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

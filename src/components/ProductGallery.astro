@@ -1,0 +1,74 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+  imagens: any[];
+  nome: string;
+}
+
+const { imagens, nome } = Astro.props;
+---
+
+<div class="product-gallery grid gap-3">
+  <div class="aspect-[4/5] overflow-hidden bg-surface-alt">
+    <Image 
+      id="main-image"
+      src={imagens[0]} 
+      alt={nome}
+      width={800}
+      height={1000}
+      class="w-full h-full object-cover object-center transition-opacity duration-300"
+    />
+  </div>
+
+  {imagens.length > 1 && (
+    <div class="flex gap-3 overflow-x-auto pb-2">
+      {imagens.map((img, index) => (
+        <button 
+          type="button"
+          aria-label={`Ver foto ${index + 1} de ${nome}`}
+          class={`gallery-thumb flex-shrink-0 w-20 h-24 overflow-hidden border-2 transition-colors ${index === 0 ? 'border-dark' : 'border-transparent hover:border-border'}`}
+          data-image-src={img.src}
+        >
+          <Image 
+            src={img} 
+            alt=""
+            width={80}
+            height={96}
+            class="w-full h-full object-cover"
+          />
+        </button>
+      ))}
+    </div>
+  )}
+</div>
+
+<script>
+  const thumbs = document.querySelectorAll('.gallery-thumb');
+  const mainImage = document.getElementById('main-image') as HTMLImageElement;
+
+  if (thumbs.length > 0 && mainImage) {
+    thumbs.forEach(thumb => {
+      thumb.addEventListener('click', () => {
+        // Atualiza src da imagem principal
+        const newSrc = thumb.getAttribute('data-image-src');
+        if (newSrc) {
+          // Pequeno fade effect
+          mainImage.style.opacity = '0.5';
+          setTimeout(() => {
+            mainImage.src = newSrc;
+            mainImage.style.opacity = '1';
+          }, 150);
+        }
+        
+        // Atualiza estilo dos thumbnails
+        thumbs.forEach(t => {
+          t.classList.remove('border-dark');
+          t.classList.add('border-transparent');
+        });
+        thumb.classList.remove('border-transparent');
+        thumb.classList.add('border-dark');
+      });
+    });
+  }
+</script>

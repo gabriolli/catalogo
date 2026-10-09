@@ -1,0 +1,52 @@
+---
+// Toast.astro - Notificacao global (ex: produto adicionado ao carrinho)
+---
+<div id="toast-container" class="fixed bottom-4 right-4 z-50 hidden translate-y-full transition-transform duration-300 ease-in-out">
+  <div class="flex items-center gap-4 px-5 py-4 bg-dark text-white rounded-none shadow-2xl min-w-[280px]">
+    <div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+      <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+      </svg>
+    </div>
+    <div class="flex-1">
+      <h4 class="text-sm font-bold tracking-wide uppercase" id="toast-title">Sucesso</h4>
+      <p class="text-sm text-surface-alt mt-0.5" id="toast-message">Item adicionado com sucesso.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const toastContainer = document.getElementById('toast-container');
+  const toastTitle = document.getElementById('toast-title');
+  const toastMessage = document.getElementById('toast-message');
+  let timeoutId;
+
+  document.addEventListener('cart:item-added', (e: Event) => {
+    const detail = (e as CustomEvent).detail;
+    if (!toastContainer || !toastTitle || !toastMessage) return;
+
+    // Atualiza texto
+    toastTitle.textContent = detail.nome || 'Produto Adicionado';
+    toastMessage.textContent = 'Foi adicionado à sua sacola.';
+
+    // Exibe (remove hidden, aplica transformacao)
+    toastContainer.classList.remove('hidden');
+    // Pequeno delay para a classe hidden sumir antes de animar o transform
+    requestAnimationFrame(() => {
+      toastContainer.classList.remove('translate-y-full');
+      toastContainer.classList.add('translate-y-0');
+    });
+
+    // Oculta após 3 segundos
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      toastContainer.classList.remove('translate-y-0');
+      toastContainer.classList.add('translate-y-full');
+      
+      // Aguarda a animacao terminar para adicionar hidden
+      setTimeout(() => {
+        toastContainer.classList.add('hidden');
+      }, 300); // 300ms = duration-300
+    }, 3000);
+  });
+</script>

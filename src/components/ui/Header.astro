@@ -1,0 +1,52 @@
+---
+import { SITE_NAME } from '../../config/site.js';
+---
+<header class="sticky top-0 z-40 w-full bg-white/95 backdrop-blur-sm border-b border-border">
+  <div class="container mx-auto px-4 h-16 flex items-center gap-6">
+    <a href="/" class="type-display text-[2rem] text-dark hover:text-primary transition-colors pt-1">
+      {SITE_NAME}
+    </a>
+
+    <nav aria-label="Categorias" class="flex gap-5 text-[15px] font-medium text-dark-soft">
+      <a href="/#praia" class="hover:text-dark underline-offset-[6px] hover:underline decoration-2 decoration-primary">Praia</a>
+      <a href="/#fitness" class="hover:text-dark underline-offset-[6px] hover:underline decoration-2 decoration-primary">Fitness</a>
+    </nav>
+
+    <button id="cart-toggle" aria-label="Abrir sacola" class="relative ml-auto p-2 -mr-2 text-dark hover:text-primary transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+      </svg>
+      <span id="cart-count" class="absolute top-0 right-0 inline-flex items-center justify-center min-w-5 h-5 px-1 text-[11px] font-semibold text-white bg-primary rounded-full transform scale-0 transition-transform origin-center">0</span>
+    </button>
+  </div>
+</header>
+
+<script>
+  import { getItemCount } from '../../store/cartStore.js';
+
+  const cartCountEl = document.getElementById('cart-count');
+
+  function updateBadge(count: number) {
+    if (!cartCountEl) return;
+    
+    cartCountEl.textContent = count.toString();
+    
+    if (count > 0) {
+      cartCountEl.classList.remove('scale-0');
+      cartCountEl.classList.add('scale-100');
+    } else {
+      cartCountEl.classList.remove('scale-100');
+      cartCountEl.classList.add('scale-0');
+    }
+  }
+
+  // Initial load
+  document.addEventListener('DOMContentLoaded', () => {
+    updateBadge(getItemCount());
+  });
+
+  // Listen to changes
+  window.addEventListener('cart:updated', ((e: CustomEvent) => {
+    updateBadge(e.detail.count);
+  }) as EventListener);
+</script>
